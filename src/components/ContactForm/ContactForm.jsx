@@ -1,60 +1,65 @@
-import { Component } from 'react';
+import { useState } from 'react';
 import { nanoid } from 'nanoid';
 import { Label, Input, Button, FormContainer } from './ContactForm.styled';
 
-export default class ContactForm extends Component {
-  state = {
-    name: '',
-    number: '',
+const ContactForm = ({ onAddContact }) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const onChangeInputValue = event => {
+    const { name, value } = event.target;
+    switch (name) {
+      case 'name':
+        setName(value);
+        break;
+
+      case 'number':
+        setNumber(value);
+        break;
+      default:
+        return;
+    }
   };
 
-  onChangeInputValue = event => {
-    this.setState({
-      [event.target.name]: event.target.value,
-    });
-  };
-
-  onFormSubmit = event => {
+  const onFormSubmit = event => {
     event.preventDefault();
-    this.setState({
-      name: '',
-      number: '',
-    });
 
     const data = {
       id: nanoid(),
-      name: this.state.name,
-      number: this.state.number,
+      name: name,
+      number: number,
     };
-    this.props.onAddContact(data);
+    onAddContact(data);
+
+    setName('');
+    setNumber('');
   };
 
-  render() {
-    const { name, number } = this.state;
-    return (
-      <FormContainer onSubmit={this.onFormSubmit}>
-        <Label>
-          Name:
-          <Input
-            type="text"
-            name="name"
-            value={name}
-            onChange={this.onChangeInputValue}
-            required
-          />
-        </Label>
-        <Label>
-          Number:
-          <Input
-            type="text"
-            name="number"
-            value={number}
-            onChange={this.onChangeInputValue}
-            required
-          />
-        </Label>
-        <Button type="submit">Add contact</Button>
-      </FormContainer>
-    );
-  }
-}
+  return (
+    <FormContainer onSubmit={onFormSubmit}>
+      <Label>
+        Name:
+        <Input
+          type="text"
+          name="name"
+          value={name}
+          onChange={onChangeInputValue}
+          required
+        />
+      </Label>
+      <Label>
+        Number:
+        <Input
+          type="text"
+          name="number"
+          value={number}
+          onChange={onChangeInputValue}
+          required
+        />
+      </Label>
+      <Button type="submit">Add contact</Button>
+    </FormContainer>
+  );
+};
+
+export default ContactForm;
